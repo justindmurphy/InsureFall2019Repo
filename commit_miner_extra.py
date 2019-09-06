@@ -29,6 +29,32 @@ secu_kws = [ 'race', 'racy', 'buffer', 'overflow', 'stack', 'integer', 'signedne
            ]
 
 prem_bug_kw_list      = ['error', 'bug', 'fix', 'issue', 'mistake', 'incorrect', 'fault', 'defect', 'flaw', 'solve' ]
+
+def getDevsOfRepo(repo_path_param):
+    commit_dict       = {}
+    author_dict       = {}
+
+    cdCommand         = "cd " + repo_path_param + " ; "
+    commitCountCmd    = " git log --pretty=format:'%H_%an' "
+    command2Run = cdCommand + commitCountCmd
+
+    commit_count_output = subprocess.check_output(['bash','-c', command2Run])
+    author_count_output = commit_count_output.split('\n')
+    for commit_auth in author_count_output:
+       commit_ = commit_auth.split('_')[0]
+       
+       author_ = commit_auth.split('_')[1]
+       author_ = author_.replace(' ', '')
+       # only one author for one commit 
+       if commit_ not in commit_dict:
+           commit_dict[commit_] = author_ 
+       # one author can be involved with multiple commits 
+       if author_ not in author_dict:
+           author_dict[author_] = [commit_] 
+       else:            
+           author_dict[author_] = author_dict[author_] + [commit_] 
+    return commit_dict, author_dict   
+
 def giveTimeStamp():
   tsObj = time.time()
   strToret = datetime.datetime.fromtimestamp(tsObj).strftime('%Y-%m-%d %H:%M:%S')
@@ -86,7 +112,7 @@ def extractCommits(repo, branchName):
   print 'Started>' + repo_dir_absolute_path + '<' 
   repo_  = Repo(repo_dir_absolute_path)
   all_commits = list(repo_.iter_commits(branchName))
-
+  commit_dict, author_dict = getDevsOfRepo(repo_dir_absolute_path) 
   sec_cnt = 0 
   for commit_ in all_commits: 
     secu_flag  = 'NEUTRAL'
@@ -109,6 +135,7 @@ def extractCommits(repo, branchName):
     sec_kws_lower = [x_.lower() for x_ in secu_kws]
     commit_dff, mod_files_list   = getDiff(repo_dir_absolute_path, commit_hash) 
     add_loc, del_loc, tot_loc = getDiffMetrics(commit_dff)
+    author = commit_dict[commit_hash]     
 
     for sec_kw in sec_kws_lower:
       if sec_kw in msg_commit:
@@ -121,7 +148,7 @@ def extractCommits(repo, branchName):
     for mod_file in mod_files_list:
         mod_file = unicode(mod_file, errors='ignore')
         # tup_ = (repo, commit_hash, str_time_commit, add_loc, del_loc, tot_loc, author_exp, author_recent_exp, mod_file, secu_flag) 
-        tup_ = (repo, commit_hash, str_time_commit, msg_commit , mod_file, secu_flag) 
+        tup_ = (repo, commit_hash, str_time_commit, dev_count, msg_commit , mod_file, secu_flag) 
         full_list.append(tup_) 
     # diff_list.append( (commit_hash, commit_dff) )
   print 'Finished>' + repo_dir_absolute_path + '<insecure commit count------>' + str(sec_cnt)  
@@ -215,7 +242,7 @@ if __name__=='__main__':
     
     all_proj_df = pd.DataFrame(full_list) 
     # all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'ADD_LOC', 'DEL_LOC', 'TOT_LOC', 'DEV_EXP', 'DEV_RECENT', 'MODIFIED_FILE', 'SECU_FLAG'], index=False, encoding='utf-8') 
-    all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'COMMIT_MESSAGE', 'MOD_FILE', 'SECU_FLAG'], index=False, encoding='utf-8') 
+    all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'DEV_COUNT', 'COMMIT_MESSAGE', 'MOD_FILE', 'SECU_FLAG'], index=False, encoding='utf-8') 
 
     # dumpBugStatus(elgibleRepos, bug_status_csv)
 
