@@ -104,6 +104,18 @@ def getDiffMetrics(diff_param):
     loc_tot          = loc_add + loc_del 
     return loc_add, loc_del, loc_tot 
 
+def preProcess(txt_, replace_char): 
+
+    txt_ = txt_.replace('\n', replace_char)
+    txt_ = txt_.replace('\r', replace_char)
+    txt_ = txt_.replace(',',  replace_char)    
+    txt_ = txt_.replace('\t', replace_char)
+    txt_ = txt_.replace('&',  replace_char)  
+    txt_ = txt_.replace('#',  replace_char)
+    txt_ = txt_.replace('=',  replace_char)  
+    txt_ = txt_.replace('-',  replace_char)  
+
+    return txt_ 
 
 def extractCommits(repo, branchName):
   str_dump = ''
@@ -118,13 +130,7 @@ def extractCommits(repo, branchName):
     secu_flag  = 'NEUTRAL'
     msg_commit =  commit_.message 
 
-    msg_commit = msg_commit.replace('\n', ' ')
-    msg_commit = msg_commit.replace('\r', ' ')
-    msg_commit = msg_commit.replace(',',  ' ')    
-    msg_commit = msg_commit.replace('\t', ' ')
-    msg_commit = msg_commit.replace('&',  ' ')  
-    msg_commit = msg_commit.replace('#',  ' ')
-    msg_commit = msg_commit.replace('=',  ' ')      
+    msg_commit = preProcess(msg_commit, ' ')  
     msg_commit = msg_commit.lower()
 
     commit_hash = commit_.hexsha
@@ -147,6 +153,7 @@ def extractCommits(repo, branchName):
     
     for mod_file in mod_files_list:
         mod_file = unicode(mod_file, errors='ignore')
+        mod_file = preProcess(mod_file, '')  
         # tup_ = (repo, commit_hash, str_time_commit, add_loc, del_loc, tot_loc, author_exp, author_recent_exp, mod_file, secu_flag) 
         tup_ = (repo, commit_hash, str_time_commit, dev_count, msg_commit , mod_file, secu_flag) 
         full_list.append(tup_) 
