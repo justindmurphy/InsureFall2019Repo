@@ -1,0 +1,24 @@
+-- SELECT repo_name FROM [bigquery-public-data:github_repos.files] files
+-- WHERE REGEXP_MATCH(files.path, r'\.jl$') GROUP BY repo_name ORDER BY repo_name
+-- ;
+-- -- 6,538 projects with at least one Julia file
+
+
+-- SELECT repo_name FROM [bigquery-public-data:github_repos.files] files
+-- WHERE REGEXP_MATCH(files.path, r'\.jl$') 
+-- AND repo_name IN (SELECT repo_name FROM [bigquery-public-data:github_repos.files] files
+-- WHERE REGEXP_MATCH(files.path, r'\.travis.yml$') )
+-- GROUP BY repo_name ORDER BY repo_name
+-- ;
+-- -- 4,254 projects that uses Travis CI and has at least one Julia file
+
+SELECT repo_name FROM [bigquery-public-data:github_repos.languages] WHERE repo_name IN 
+(SELECT repo_name FROM [bigquery-public-data:github_repos.files] files
+WHERE REGEXP_MATCH(files.path, r'\.jl$') 
+AND repo_name IN (SELECT repo_name FROM [bigquery-public-data:github_repos.files] files
+WHERE REGEXP_MATCH(files.path, r'\.travis.yml$') )
+)
+AND language.name=='Julia' 
+GROUP BY repo_name ORDER BY repo_name
+;
+-- 3,865 projects that uses Travis CI and main laguage is Julia 
