@@ -126,8 +126,10 @@ def extractCommits(repo, branchName):
   all_commits = list(repo_.iter_commits(branchName))
   commit_dict, author_dict = getDevsOfRepo(repo_dir_absolute_path) 
   sec_cnt = 0 
+  dev_name = 'UNKNOWN'
   for commit_ in all_commits: 
     secu_flag  = 'NEUTRAL'
+    merge_flag = 'NEUTRAL' 
     msg_commit =  commit_.message 
 
     msg_commit = preProcess(msg_commit, ' ')  
@@ -141,25 +143,25 @@ def extractCommits(repo, branchName):
     sec_kws_lower = [x_.lower() for x_ in secu_kws]
     commit_dff, mod_files_list   = getDiff(repo_dir_absolute_path, commit_hash) 
     add_loc, del_loc, tot_loc = getDiffMetrics(commit_dff)
-    author = commit_dict[commit_hash]     
+    dev_name = commit_dict[commit_hash]     
 
     for sec_kw in sec_kws_lower:
       if sec_kw in msg_commit:
           secu_flag  = 'INSECURE'
           sec_cnt += 1 
           str_dump = str_dump + sec_kw + '\n' + '*'*25  + msg_commit + '\n' + '*'*25 + '\n' + repo_dir_absolute_path + '\n' + '*'*25 + '\n' + commit_hash + '\n' + '*'*25 + '\n' 
-    if secu_flag  != 'INSECURE': 
-          commit_dff = 'INSECURE_DIFF' 
+    if 'MERGE' in msg_commit:
+      merge_flag = 'MERGE' 
+    
     
     for mod_file in mod_files_list:
         mod_file = unicode(mod_file, errors='ignore')
         mod_file = preProcess(mod_file, '')  
         # tup_ = (repo, commit_hash, str_time_commit, add_loc, del_loc, tot_loc, author_exp, author_recent_exp, mod_file, secu_flag) 
-        tup_ = (repo, commit_hash, str_time_commit, dev_count, msg_commit , mod_file, secu_flag) 
+        tup_ = (repo, commit_hash, str_time_commit, dev_name, msg_commit , mod_file, merge_flag, secu_flag) 
         full_list.append(tup_) 
     # diff_list.append( (commit_hash, commit_dff) )
   print 'Finished>' + repo_dir_absolute_path + '<insecure commit count------>' + str(sec_cnt)  
-  # print str_dump 
   return full_list , diff_list
 
 
@@ -249,7 +251,7 @@ if __name__=='__main__':
     
     all_proj_df = pd.DataFrame(full_list) 
     # all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'ADD_LOC', 'DEL_LOC', 'TOT_LOC', 'DEV_EXP', 'DEV_RECENT', 'MODIFIED_FILE', 'SECU_FLAG'], index=False, encoding='utf-8') 
-    all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'DEV_COUNT', 'COMMIT_MESSAGE', 'MOD_FILE', 'SECU_FLAG'], index=False, encoding='utf-8') 
+    all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'DEV', 'COMMIT_MESSAGE', 'MOD_FILE', 'MERGE_FLAG', 'SECU_FLAG'], index=False, encoding='utf-8') 
 
     # dumpBugStatus(elgibleRepos, bug_status_csv)
 
