@@ -150,7 +150,7 @@ def extractCommits(repo, branchName):
           secu_flag  = 'INSECURE'
           sec_cnt += 1 
           str_dump = str_dump + sec_kw + '\n' + '*'*25  + msg_commit + '\n' + '*'*25 + '\n' + repo_dir_absolute_path + '\n' + '*'*25 + '\n' + commit_hash + '\n' + '*'*25 + '\n' 
-    if 'MERGE' in msg_commit:
+    if 'merge' == msg_commit.split(' ')[0]:
       merge_flag = 'MERGE' 
     
     
@@ -227,6 +227,12 @@ def dumpBugStatus(projects, csv_file):
     bug_status_df = pd.DataFrame(full_list) 
     bug_status_df.to_csv(csv_file, header=['REPO','HASH', 'MOD_FIL', 'SECU_FLAG', 'BUG_FLAG'], index=False, encoding='utf-8')
 
+
+def getUniqueEntries(inp_fil, out_fil):
+  df_        = pd.read_csv(inp_fil) 
+  df_.drop_duplicates(subset ="HASH", keep = False, inplace = True) 
+  df_.to_csv(out_fil, header=['REPO','HASH','TIME', 'DEV', 'COMMIT_MESSAGE', 'MOD_FILE', 'MERGE_FLAG', 'SECU_FLAG'], index=False, encoding='utf-8')   
+
 if __name__=='__main__':
 
     t1 = time.time()
@@ -242,18 +248,20 @@ if __name__=='__main__':
     secu_dict, diff_dict = {}, {}    
     full_list = []
 
-    for proj_ in elgibleRepos:
-        branchName = getBranchName(proj_) 
-        commit_secu_list, commit_diff_list = extractCommits(proj_, branchName)
-        secu_dict[proj_] = commit_secu_list
-        diff_dict[proj_] = commit_diff_list 
-        full_list = full_list + commit_secu_list
+    # for proj_ in elgibleRepos:
+    #     branchName = getBranchName(proj_) 
+    #     commit_secu_list, commit_diff_list = extractCommits(proj_, branchName)
+    #     secu_dict[proj_] = commit_secu_list
+    #     diff_dict[proj_] = commit_diff_list 
+    #     full_list = full_list + commit_secu_list
     
-    all_proj_df = pd.DataFrame(full_list) 
-    # all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'ADD_LOC', 'DEL_LOC', 'TOT_LOC', 'DEV_EXP', 'DEV_RECENT', 'MODIFIED_FILE', 'SECU_FLAG'], index=False, encoding='utf-8') 
-    all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'DEV', 'COMMIT_MESSAGE', 'MOD_FILE', 'MERGE_FLAG', 'SECU_FLAG'], index=False, encoding='utf-8') 
+    # all_proj_df = pd.DataFrame(full_list) 
+    # # all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'ADD_LOC', 'DEL_LOC', 'TOT_LOC', 'DEV_EXP', 'DEV_RECENT', 'MODIFIED_FILE', 'SECU_FLAG'], index=False, encoding='utf-8') 
+    # all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'DEV', 'COMMIT_MESSAGE', 'MOD_FILE', 'MERGE_FLAG', 'SECU_FLAG'], index=False, encoding='utf-8') 
 
     # dumpBugStatus(elgibleRepos, bug_status_csv)
+
+    # getUniqueEntries(secu_out_csv_fil, 'UNIQUE_SECU_COMM.csv')
 
     print '*'*100
     print 'Ended at:', giveTimeStamp()
