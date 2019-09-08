@@ -8,7 +8,7 @@ var out_fil = 'GHT_TRAVIS_JULIA.csv'
 
 const bigquery = new BigQuery({
   projectId: projectId,
-  keyFilename: '/Users/akond/google-query/GithubSolidityQuery-54472c80e6dc.json', 
+  keyFilename: '', 
   location: 'US'
 });
 
