@@ -114,6 +114,7 @@ def preProcess(txt_, replace_char):
     txt_ = txt_.replace('#',  replace_char)
     txt_ = txt_.replace('=',  replace_char)  
     txt_ = txt_.replace('-',  replace_char)  
+    txt_ = txt_.lower()
 
     return txt_ 
 
@@ -196,14 +197,8 @@ def dumpBugStatus(projects, csv_file):
         for commit_ in all_commits: 
             commit_hash = commit_.hexsha
             
-            msg_commit =  commit_.message         
-            msg_commit = msg_commit.replace('\n', ' ')
-            msg_commit = msg_commit.replace(',',  ';')    
-            msg_commit = msg_commit.replace('\t', ' ')
-            msg_commit = msg_commit.replace('&',  ';')  
-            msg_commit = msg_commit.replace('#',  ' ')
-            msg_commit = msg_commit.replace('=',  ' ')      
-            msg_commit = msg_commit.lower()    
+            msg_commit = commit_.message         
+            msg_commit = preProcess(msg_commit, ' ')
             
             commit_dff, mod_files_list   = getDiff(repo_dir_absolute_path, commit_hash) 
             for sec_kw in sec_kws_lower:
@@ -217,7 +212,7 @@ def dumpBugStatus(projects, csv_file):
                   # str_dump = str_dump + bug_kw + '\n' + '*'*25  + msg_commit + '\n' + '*'*25 + '\n' + repo_dir_absolute_path + '\n' + '*'*25 + '\n' + commit_hash + '\n' + '*'*25 + '\n' 
             for mod_file in mod_files_list:
                 mod_file = unicode(mod_file, errors='ignore')
-                tup_ = (proj_, commit_hash, mod_file, secu_flag, bug_flag)     
+                tup_ = (proj_, commit_hash, mod_file, secu_flag, msg_commit, bug_flag)     
                 full_list.append(tup_)
         print 'Bugs:{}, Security bugs:{}, All:{}'.format( bug_cnt, sec_cnt, len(all_commits) ) 
         print '='*50                            
@@ -225,7 +220,8 @@ def dumpBugStatus(projects, csv_file):
         print '='*50   
 
     bug_status_df = pd.DataFrame(full_list) 
-    bug_status_df.to_csv(csv_file, header=['REPO','HASH', 'MOD_FIL', 'SECU_FLAG', 'BUG_FLAG'], index=False, encoding='utf-8')
+    bug_status_df.drop_duplicates(subset ="HASH", keep = False, inplace = True) 
+    bug_status_df.to_csv(csv_file, header=['REPO','HASH', 'MOD_FIL', 'SECU_FLAG', 'COMMIT_MESSAGE' , 'BUG_FLAG'], index=False, encoding='utf-8')
 
 
 def getUniqueEntries(inp_fil, out_fil):
@@ -239,8 +235,8 @@ if __name__=='__main__':
     print 'Started at:', giveTimeStamp()
     print '*'*100
 
-    secu_out_csv_fil  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/ALL_SECU_COMM.csv'
-    # bug_status_csv    = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/ALL_BUG_STATUS.csv'
+    # secu_out_csv_fil  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/ALL_SECU_COMM.csv'
+    bug_status_csv    = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/ALL_BUG_STATUS.csv'
 
     fileName     = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/project_repos/LOCKED_FINAL_JULIA_REPOS.csv'
     elgibleRepos = getEligibleProjects(fileName)
@@ -259,7 +255,7 @@ if __name__=='__main__':
     # # all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'ADD_LOC', 'DEL_LOC', 'TOT_LOC', 'DEV_EXP', 'DEV_RECENT', 'MODIFIED_FILE', 'SECU_FLAG'], index=False, encoding='utf-8') 
     # all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'DEV', 'COMMIT_MESSAGE', 'MOD_FILE', 'MERGE_FLAG', 'SECU_FLAG'], index=False, encoding='utf-8') 
 
-    # dumpBugStatus(elgibleRepos, bug_status_csv)
+    dumpBugStatus(elgibleRepos, bug_status_csv)
 
     # getUniqueEntries(secu_out_csv_fil, 'UNIQUE_SECU_COMM.csv')
 
