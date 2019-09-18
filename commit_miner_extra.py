@@ -187,14 +187,15 @@ def dumpBugStatus(projects, csv_file):
 
     full_list = []
     for proj_ in projects:
-        sec_cnt, bug_cnt = 0, 0 
+        sec_cnt, bug_cnt, merge_cnt = 0, 0, 0 
         secu_flag = 'NEUTRAL'
         branchName = getBranchName(proj_)     
         repo_dir_absolute_path = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/project_repos/' + proj_ + '/'
         print 'Started>' + repo_dir_absolute_path + '<' 
         repo_  = Repo(repo_dir_absolute_path)
         all_commits = list(repo_.iter_commits(branchName))   
-        for commit_ in all_commits: 
+        for commit_ in all_commits:
+            bug_flag,  secu_flag, merge_flag = 'NEUTRAL', 'NEUTRAL', 'NEUTRAL'
             commit_hash = commit_.hexsha
             
             msg_commit = commit_.message         
@@ -209,20 +210,24 @@ def dumpBugStatus(projects, csv_file):
               if bug_kw in msg_commit:
                   bug_flag  = 'BUGGY'
                   bug_cnt += 1         
+            if 'merge' in msg_commit:
+                  merge_flag  = 'MERGED'
+                  merge_cnt += 1         
                   # str_dump = str_dump + bug_kw + '\n' + '*'*25  + msg_commit + '\n' + '*'*25 + '\n' + repo_dir_absolute_path + '\n' + '*'*25 + '\n' + commit_hash + '\n' + '*'*25 + '\n' 
             for mod_file in mod_files_list:
                 mod_file = unicode(mod_file, errors='ignore')
-                tup_ = (proj_, commit_hash, mod_file, secu_flag, msg_commit, bug_flag)     
+                tup_ = (proj_, commit_hash, mod_file, secu_flag, merge_flag, msg_commit, bug_flag)      
                 full_list.append(tup_)
-        print 'Bugs:{}, Security bugs:{}, All:{}'.format( bug_cnt, sec_cnt, len(all_commits) ) 
+        print 'Bugs:{}, Security bugs:{}, Merged commits:{},  All:{}'.format( bug_cnt, sec_cnt, merge_cnt , len(all_commits) ) 
         print '='*50                            
         print str_dump
         print '='*50   
 
     bug_status_df = pd.DataFrame(full_list) 
-    bug_status_df.drop_duplicates(subset ="HASH", keep = False, inplace = True) 
-    bug_status_df.to_csv(csv_file, header=['REPO','HASH', 'MOD_FIL', 'SECU_FLAG', 'COMMIT_MESSAGE' , 'BUG_FLAG'], index=False, encoding='utf-8')
-
+    bug_status_df.to_csv(csv_file, header=['REPO','HASH', 'MOD_FIL', 'SECU_FLAG', 'MERGE_FLAG',  'COMMIT_MESSAGE' , 'BUG_FLAG'], index=False, encoding='utf-8')
+    bug_status_df_non_unique = pd.read_csv(csv_file)
+    bug_status_df_non_unique.drop_duplicates(subset ="HASH", keep = False, inplace = True) 
+    bug_status_df_non_unique.to_csv('UNIQUE_SECU_BUG_MSG.csv', header=['REPO','HASH', 'MOD_FIL', 'SECU_FLAG', 'MERGE_FLAG',  'COMMIT_MESSAGE' , 'BUG_FLAG'], index=False, encoding='utf-8')    
 
 def getUniqueEntries(inp_fil, out_fil):
   df_        = pd.read_csv(inp_fil) 
