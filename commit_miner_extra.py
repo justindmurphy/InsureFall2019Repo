@@ -234,6 +234,53 @@ def getUniqueEntries(inp_fil, out_fil):
   df_.drop_duplicates(subset ="HASH", keep = False, inplace = True) 
   df_.to_csv(out_fil, header=['REPO','HASH','TIME', 'DEV', 'COMMIT_MESSAGE', 'MOD_FILE', 'MERGE_FLAG', 'SECU_FLAG'], index=False, encoding='utf-8')   
 
+def getDevsOfRepo(repo_path_param):
+    commit_dict       = {}
+    author_dict       = {}
+
+    cdCommand         = "cd " + repo_path_param + " ; "
+    commitCountCmd    = " git log --pretty=format:'%H_%an' "
+    command2Run = cdCommand + commitCountCmd
+
+    commit_count_output = subprocess.check_output(['bash','-c', command2Run])
+    author_count_output = commit_count_output.split('\n')
+    for commit_auth in author_count_output:
+       commit_ = commit_auth.split('_')[0]
+       
+       author_ = commit_auth.split('_')[1]
+       author_ = author_.replace(' ', '')
+       # only one author for one commit 
+       if commit_ not in commit_dict:
+           commit_dict[commit_] = author_ 
+       # one author can be involved with multiple commits 
+       if author_ not in author_dict:
+           author_dict[author_] = [commit_] 
+       else:            
+           author_dict[author_] = author_dict[author_] + [commit_] 
+    return commit_dict, author_dict   
+
+
+def getDevEmails(projects, csv_file):
+    str_dump = ''
+
+    full_list = []
+    for proj_ in projects:
+        branchName = getBranchName(proj_)     
+        repo_dir_absolute_path = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/project_repos/' + proj_ + '/'
+        CommitDevDict, DevCommitDict = getDevsOfRepo(repo_dir_absolute_path) 
+        print 'Started>' + repo_dir_absolute_path + '<' 
+        repo_  = Repo(repo_dir_absolute_path)
+        all_commits = list(repo_.iter_commits(branchName))   
+        for commit_ in all_commits:
+            commit_hash = commit_.hexsha
+            commit_author = CommitDevDict[commit_hash]
+            full_list.append((proj_, commit_hash, commit_author))
+            
+    bug_status_df = pd.DataFrame(full_list) 
+    bug_status_df.to_csv(csv_file, header=['REPO','HASH', 'DEV_IDENTIFIER'], index=False, encoding='utf-8')
+    bug_status_df_non_unique = pd.read_csv(csv_file)
+
+
 if __name__=='__main__':
 
     t1 = time.time()
@@ -241,7 +288,7 @@ if __name__=='__main__':
     print '*'*100
 
     # secu_out_csv_fil  = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/ALL_SECU_COMM.csv'
-    bug_status_csv    = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/ALL_BUG_STATUS.csv'
+    # bug_status_csv    = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/ALL_BUG_STATUS.csv'
 
     fileName     = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/project_repos/LOCKED_FINAL_JULIA_REPOS.csv'
     elgibleRepos = getEligibleProjects(fileName)
@@ -260,9 +307,11 @@ if __name__=='__main__':
     # # all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'ADD_LOC', 'DEL_LOC', 'TOT_LOC', 'DEV_EXP', 'DEV_RECENT', 'MODIFIED_FILE', 'SECU_FLAG'], index=False, encoding='utf-8') 
     # all_proj_df.to_csv(secu_out_csv_fil, header=['REPO','HASH','TIME', 'DEV', 'COMMIT_MESSAGE', 'MOD_FILE', 'MERGE_FLAG', 'SECU_FLAG'], index=False, encoding='utf-8') 
 
-    dumpBugStatus(elgibleRepos, bug_status_csv)
+    # dumpBugStatus(elgibleRepos, bug_status_csv)
 
     # getUniqueEntries(secu_out_csv_fil, 'UNIQUE_SECU_COMM.csv')
+    dev_out_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_DEVS.csv'
+    getDevEmails(elgibleRepos, dev_out_file )
 
     print '*'*100
     print 'Ended at:', giveTimeStamp()
