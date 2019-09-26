@@ -84,9 +84,9 @@ def getDevCountForProj(dev_df_, proj_name_):
 def getCommCountForProj(comm_df_, proj_name_):
     return len( np.unique( comm_df_[comm_df_['REPO']==proj_name_]['HASH'].tolist() ) )    
 
-def getCIAdoptionDays(hash_before_list, commit_df, proj_):
+def getCIAdoptionDays(hash_before_list, proj_sec_df, proj_):
     before_date_list = []
-    commit_hash_dates =  commit_df[commit_df['REPO']==proj_]['DATE'].tolist() 
+    commit_hash_dates =  proj_sec_df[proj_sec_df['REPO']==proj_]['DATE'].tolist() 
     proj_start_date   =  min(commit_hash_dates) 
 
     for hash_ in hash_before_list:
@@ -105,7 +105,7 @@ def generateDataset(dic_, commit_df, bug_df, secu_df, dev_df, csv_out_file):
         dev_count, commit_count = getDevCountForProj(dev_df, proj_name), getCommCountForProj(commit_df, proj_name)
 
         before_hash_list, after_hash_list = v_ 
-        age_at_travis           = getCIAdoptionDays(before_hash_list, commit_df, proj_name)
+        age_at_travis           = getCIAdoptionDays(before_hash_list, secu_df, proj_name)
         for hash_val in before_hash_list:
             commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
 
@@ -132,7 +132,6 @@ if __name__=='__main__':
 
    comm_size_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/COMMIT_SIZE_FINAL.csv' 
    comm_size_df_  = pd.read_csv(comm_size_file)     
-   comm_size_df_['DATE'] = comm_size_df_['TIME'].apply(getDate)
 
    buggy_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_BUG_COMM.csv' 
    buggy_df_  = pd.read_csv(buggy_file)     
