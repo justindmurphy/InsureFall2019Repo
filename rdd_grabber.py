@@ -69,15 +69,20 @@ def getBeforeAfterCIDate(travis_dict, df_, days_cutoff=60):
     return proj_hash_dict 
 
 def getValuesForHash(repo_, hash_, comm_df, bug_df_, secu_df_):
+    bug_cnt, sec_cnt  = 0 , 0 
     repo_df    = comm_df[comm_df['REPO']==repo_]
     commit_add = repo_df[repo_df['HASH']==hash_]['ADD_LOC'].tolist()[0]
     commit_del = repo_df[repo_df['HASH']==hash_]['DEL_LOC'].tolist()[0]
     commit_tot = repo_df[repo_df['HASH']==hash_]['TOT_LOC'].tolist()[0]    
 
     commit_bug = bug_df_[bug_df_['HASH']==hash_]['FINAL_RATING'].tolist()[0]    
+    if commit_bug=='BUGGY':
+        bug_cnt = 1 
     commit_sec = secu_df_[secu_df_['HASH']==hash_]['SECU_FLAG'].tolist()[0]    
+    if commit_sec=='INSECURE':
+        sec_cnt = 1     
 
-    return commit_add, commit_del, commit_tot, commit_bug, commit_sec 
+    return commit_add, commit_del, commit_tot, bug_cnt, sec_cnt 
 
 def getDevCountForProj(dev_df_, proj_name_):
     return len( np.unique( dev_df_[dev_df_['REPO']==proj_name_]['DEV_IDENTIFIER'].tolist() ) )
@@ -105,21 +110,30 @@ def getCIAdoptionDays(hash_before_list, proj_sec_df, proj_):
 
 
 def generateDataset(dic_, commit_df, bug_df, secu_df, dev_df, cutoff_days, csv_out_file):
+    all_data_list = []
     for k_, v_ in dic_.iteritems(): 
+        time_count = 0 
         time_after_intervention, intervention_flag  = 0, 0 
         proj_name = k_ 
         before_hash_list, after_hash_list = v_ 
         age_at_travis           = getCIAdoptionDays(before_hash_list, secu_df, proj_name)
         if age_at_travis > cutoff_days:
-            tot_comm_count = len( np.unique( secu_df[secu_df['REPO']==proj_name]['HASH'].tolist() ) )
             dev_count, commit_count = getDevCountForProj(dev_df, proj_name), getCommCountForProj(commit_df, proj_name)
             for hash_val in before_hash_list:
+                time_count += 1  
                 commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
 
             for hash_val in after_hash_list:
                 time_after_intervention += 1 
                 intervention_flag = 1 
+                time_count += 1 
                 commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
+            data_tuple = (proj_name, time_count , time_after_intervention, intervention_flag , dev_count, commit_count, commi_add, commi_del, commi_tot, commi_bug, commi_sec) 
+            all_data_list.append(data_tuple)
+            print data_tuple
+            print '*'*25
+    full_df = pd.DataFrame(all_data_list) 
+    # print full_df.head() 
 
 
 if __name__=='__main__':
