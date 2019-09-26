@@ -111,6 +111,7 @@ def generateDataset(dic_, commit_df, bug_df, secu_df, dev_df, cutoff_days, csv_o
         before_hash_list, after_hash_list = v_ 
         age_at_travis           = getCIAdoptionDays(before_hash_list, secu_df, proj_name)
         if age_at_travis > cutoff_days:
+            tot_comm_count = len( np.unique( secu_df[secu_df['REPO']==proj_name]['HASH'].tolist() ) )
             dev_count, commit_count = getDevCountForProj(dev_df, proj_name), getCommCountForProj(commit_df, proj_name)
             for hash_val in before_hash_list:
                 commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
