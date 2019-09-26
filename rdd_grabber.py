@@ -3,6 +3,7 @@ Akond Rahman
 Sep 25, 2019 
 Get RDD Dataset
 '''
+from datetime import timedelta
 import pandas as pd 
 from datetime import datetime
 import time 
@@ -84,38 +85,44 @@ def getDevCountForProj(dev_df_, proj_name_):
 def getCommCountForProj(comm_df_, proj_name_):
     return len( np.unique( comm_df_[comm_df_['REPO']==proj_name_]['HASH'].tolist() ) )    
 
+def getDiffDays( e_date, s_date ):
+    diff = e_date - s_date
+    return  diff.days    
+
 def getCIAdoptionDays(hash_before_list, proj_sec_df, proj_):
     before_date_list = []
     commit_hash_dates =  proj_sec_df[proj_sec_df['REPO']==proj_]['DATE'].tolist() 
     proj_start_date   =  min(commit_hash_dates) 
 
     for hash_ in hash_before_list:
-        before_date_list.append( commit_df[commit_df['HASH']==hash_]['DATE'].tolist()[0] )
+        before_date_list.append( proj_sec_df[proj_sec_df['HASH']==hash_]['DATE'].tolist()[0] )
     ci_start_date   =  max(before_date_list)  
+    diff_days = getDiffDays(ci_start_date, proj_start_date) 
 
-    print proj_, proj_start_date, ci_start_date 
+    # print proj_, proj_start_date, ci_start_date, diff_days 
+    return diff_days 
 
 
 
-def generateDataset(dic_, commit_df, bug_df, secu_df, dev_df, csv_out_file):
+def generateDataset(dic_, commit_df, bug_df, secu_df, dev_df, cutoff_days, csv_out_file):
     for k_, v_ in dic_.iteritems(): 
         time_after_intervention, intervention_flag  = 0, 0 
         proj_name = k_ 
-
-        dev_count, commit_count = getDevCountForProj(dev_df, proj_name), getCommCountForProj(commit_df, proj_name)
-
         before_hash_list, after_hash_list = v_ 
         age_at_travis           = getCIAdoptionDays(before_hash_list, secu_df, proj_name)
-        for hash_val in before_hash_list:
-            commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
+        if age_at_travis > cutoff_days:
+            dev_count, commit_count = getDevCountForProj(dev_df, proj_name), getCommCountForProj(commit_df, proj_name)
+            for hash_val in before_hash_list:
+                commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
 
-        for hash_val in after_hash_list:
-            time_after_intervention += 1 
-            intervention_flag = 1 
-            commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
+            for hash_val in after_hash_list:
+                time_after_intervention += 1 
+                intervention_flag = 1 
+                commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
 
 
 if __name__=='__main__':
+   days_ = 60 
    travis_ci_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/TRAVIS_START_TIME_DATE.csv'
    travis_ci_df_  = pd.read_csv(travis_ci_file) 
 
@@ -128,7 +135,7 @@ if __name__=='__main__':
    proj_secu_df_  = pd.read_csv(proj_secu_file)  
    proj_secu_df_['DATE'] = proj_secu_df_['TIME'].apply(getDate)
    #print proj_secu_df_
-   all_proj_before_after_hash_dict = getBeforeAfterCIDate(proj_travis_date_dict, proj_secu_df_, 60) 
+   all_proj_before_after_hash_dict = getBeforeAfterCIDate(proj_travis_date_dict, proj_secu_df_, days_)  
 
    comm_size_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/COMMIT_SIZE_FINAL.csv' 
    comm_size_df_  = pd.read_csv(comm_size_file)     
@@ -140,5 +147,5 @@ if __name__=='__main__':
    dev_df_  = pd.read_csv(dev_file)     
 
    rdd_out_file =  '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/RDD_DATASET.csv'
-   generateDataset(all_proj_before_after_hash_dict, comm_size_df_, buggy_df_, proj_secu_df_, dev_df_ , rdd_out_file) 
+   generateDataset(all_proj_before_after_hash_dict, comm_size_df_, buggy_df_, proj_secu_df_, dev_df_ , days_,  rdd_out_file) 
 
