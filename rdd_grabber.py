@@ -122,18 +122,22 @@ def generateDataset(dic_, commit_df, bug_df, secu_df, dev_df, cutoff_days, csv_o
             for hash_val in before_hash_list:
                 time_count += 1  
                 commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
-
+                data_tuple = (proj_name, time_count , time_after_intervention, intervention_flag , age_at_travis, dev_count, commit_count, commi_add, commi_del, commi_tot, commi_bug, commi_sec) 
+                all_data_list.append(data_tuple)
+                print data_tuple
+                print '*'*25
             for hash_val in after_hash_list:
                 time_after_intervention += 1 
                 intervention_flag = 1 
                 time_count += 1 
                 commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
-            data_tuple = (proj_name, time_count , time_after_intervention, intervention_flag , dev_count, commit_count, commi_add, commi_del, commi_tot, commi_bug, commi_sec) 
-            all_data_list.append(data_tuple)
-            print data_tuple
-            print '*'*25
+                data_tuple = (proj_name, time_count , time_after_intervention, intervention_flag , age_at_travis, dev_count, commit_count, commi_add, commi_del, commi_tot, commi_bug, commi_sec) 
+                all_data_list.append(data_tuple)
+                print data_tuple
+                print '*'*25
     full_df = pd.DataFrame(all_data_list) 
-    # print full_df.head() 
+    # print full_df.head() 		commit_frequency			age_at_travis	total_commits
+    full_df.to_csv(csv_out_file, header=['REPO', 'TIME_INDEX', 'TIME_AFTER_INTERVENTION', 'INTERVENTION_FLAG', 'AGE_AT_TRAVIS', 'REPO_DEV_COUNT', 'REPO_COMMIT_COUNT', 'ADD_LOC', 'DEL_LOC', 'COMMIT_SIZE', 'BUG_COUNT', 'SEC_COUNT' ], index=False, encoding='utf-8')
 
 
 if __name__=='__main__':
@@ -161,6 +165,6 @@ if __name__=='__main__':
    dev_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_DEVS.csv' 
    dev_df_  = pd.read_csv(dev_file)     
 
-   rdd_out_file =  '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/RDD_DATASET.csv'
+   rdd_out_file =  '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/FULL_RDD_DATASET.csv'
    generateDataset(all_proj_before_after_hash_dict, comm_size_df_, buggy_df_, proj_secu_df_, dev_df_ , days_,  rdd_out_file) 
 
