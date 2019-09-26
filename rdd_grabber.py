@@ -27,15 +27,20 @@ def getTravisStartDate(df_pa):
     return travis_dict 
 
 
-def getBeforeAfterCIDate(travis_dict, df_):
+def getBeforeAfterCIDate(travis_dict, df_, days_cutoff=60):
+    valid_days_projects = 0 
     for proj_name, ci_start_date in travis_dict.iteritems():
         proj_dates = df_[df_['REPO']==proj_name]['DATE'].tolist()
-        before_ci_dates = [x_ for x_ in proj_dates if x_ < ci_start_date ] 
-        after_ci_dates  = [x_ for x_ in proj_dates if x_ >= ci_start_date ] 
-        print ci_start_date
-        print 'Before:', before_ci_dates
-        print 'After:', after_ci_dates
-        print '='*50
+        before_ci_dates = [x_ for x_ in proj_dates if x_ <= ci_start_date ] 
+        after_ci_dates  = [x_ for x_ in proj_dates if x_ > ci_start_date ] 
+        # print ci_start_date
+        days_before_ci, days_after_ci= len(before_ci_dates), len(after_ci_dates)
+        if (days_before_ci >= days_cutoff) and (days_after_ci >= days_cutoff) :
+            valid_days_projects += 1
+            print 'Before:', days_before_ci
+            print 'After:',  days_after_ci 
+            print '='*50
+    print valid_days_projects
 
 if __name__=='__main__':
    travis_ci_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/TRAVIS_START_TIME_DATE.csv'
