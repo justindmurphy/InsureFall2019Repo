@@ -69,7 +69,7 @@ def getBeforeAfterCIDate(travis_dict, df_, days_cutoff=60):
     return proj_hash_dict 
 
 def getValuesForHash(repo_, hash_, comm_df, bug_df_, secu_df_):
-    bug_cnt, sec_cnt  = 0 , 0 
+    bug_cnt, sec_cnt, mer_cnt  = 0 , 0 , 0
     repo_df    = comm_df[comm_df['REPO']==repo_]
     commit_add = repo_df[repo_df['HASH']==hash_]['ADD_LOC'].tolist()[0]
     commit_del = repo_df[repo_df['HASH']==hash_]['DEL_LOC'].tolist()[0]
@@ -81,8 +81,11 @@ def getValuesForHash(repo_, hash_, comm_df, bug_df_, secu_df_):
     commit_sec = secu_df_[secu_df_['HASH']==hash_]['SECU_FLAG'].tolist()[0]    
     if commit_sec=='INSECURE':
         sec_cnt = 1     
+    commit_merge = bug_df_[bug_df_['HASH']==hash_]['MERGE_FLAG'].tolist()[0]    
+    if commit_merge=='MERGED':
+        mer_cnt = 1 
 
-    return commit_add, commit_del, commit_tot, bug_cnt, sec_cnt 
+    return commit_add, commit_del, commit_tot, bug_cnt, sec_cnt , mer_cnt
 
 def getDevCountForProj(dev_df_, proj_name_):
     return len( np.unique( dev_df_[dev_df_['REPO']==proj_name_]['DEV_IDENTIFIER'].tolist() ) )
@@ -121,23 +124,23 @@ def generateDataset(dic_, commit_df, bug_df, secu_df, dev_df, cutoff_days, csv_o
             dev_count, commit_count = getDevCountForProj(dev_df, proj_name), getCommCountForProj(commit_df, proj_name)
             for hash_val in before_hash_list:
                 time_count += 1  
-                commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
-                data_tuple = (proj_name, time_count , time_after_intervention, intervention_flag , age_at_travis, dev_count, commit_count, commi_add, commi_del, commi_tot, commi_bug, commi_sec) 
+                commi_add, commi_del, commi_tot, commi_bug, commi_sec, commi_merge  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
+                data_tuple = (proj_name, time_count , time_after_intervention, intervention_flag , age_at_travis, dev_count, commit_count, commi_add, commi_del, commi_tot, commi_bug, commi_sec,  commi_merge) 
                 all_data_list.append(data_tuple)
-                print data_tuple
-                print '*'*25
+                # print data_tuple
+                # print '*'*25
             for hash_val in after_hash_list:
                 time_after_intervention += 1 
                 intervention_flag = 1 
                 time_count += 1 
-                commi_add, commi_del, commi_tot, commi_bug, commi_sec  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
-                data_tuple = (proj_name, time_count , time_after_intervention, intervention_flag , age_at_travis, dev_count, commit_count, commi_add, commi_del, commi_tot, commi_bug, commi_sec) 
+                commi_add, commi_del, commi_tot, commi_bug, commi_sec, commi_merge  = getValuesForHash(proj_name, hash_val, commit_df, bug_df, secu_df) 
+                data_tuple = (proj_name, time_count , time_after_intervention, intervention_flag , age_at_travis, dev_count, commit_count, commi_add, commi_del, commi_tot, commi_bug, commi_sec,  commi_merge) 
                 all_data_list.append(data_tuple)
-                print data_tuple
-                print '*'*25
+                # print data_tuple
+                # print '*'*25
     full_df = pd.DataFrame(all_data_list) 
     # print full_df.head() 		commit_frequency			age_at_travis	total_commits
-    full_df.to_csv(csv_out_file, header=['REPO', 'TIME_INDEX', 'TIME_AFTER_INTERVENTION', 'INTERVENTION_FLAG', 'AGE_AT_TRAVIS', 'REPO_DEV_COUNT', 'REPO_COMMIT_COUNT', 'ADD_LOC', 'DEL_LOC', 'COMMIT_SIZE', 'BUG_COUNT', 'SEC_COUNT' ], index=False, encoding='utf-8')
+    full_df.to_csv(csv_out_file, header=['REPO', 'TIME_INDEX', 'TIME_AFTER_INTERVENTION', 'INTERVENTION_FLAG', 'AGE_AT_TRAVIS', 'REPO_DEV_COUNT', 'REPO_COMMIT_COUNT', 'ADD_LOC', 'DEL_LOC', 'COMMIT_SIZE', 'BUG_COUNT', 'SEC_COUNT', 'MERGE_COUNT' ], index=False, encoding='utf-8')
 
 
 if __name__=='__main__':
