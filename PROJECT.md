@@ -42,3 +42,30 @@ The specific aims of our project is listed below:
     -Task-Final Report: We will submit the findings from our research study with appropriate sections namely, introduction, methodology, and threats to validity. 
     -Task-Final Presentation: The team members will present findings formally in front of other InSure participants
 
+For each task we provide the status below: 
+
+| Tasks                                      | Deadline     | Assignee                             | Status    |   |
+|--------------------------------------------|--------------|--------------------------------------|-----------|---|
+| Bid submission                             | Sep 16, 2019 | Justin Murphy                        | Completed |   |
+| Repository mining                          | Sep 20, 2019 | Justin Murphy                        | Completed |   |
+| Grounded security bug dataset construction | Sep 27, 2019 | Elyas Brady   and Kaitlyn Cottrell   | Completed |   |
+| Commit pattern mining                      | Oct 04, 2019 | Justin Murphy and Kaitlyn Cottrell   | Completed |   |
+| Proposal submission                        | Oct 04, 2019 | Justin Murphy                        | Completed |   |
+| Regression Analyeses                       | Oct 25, 2019 | Elyas Brady                          | Completed |   |
+| Final Report Submission                    | Dec 06, 2019 | J. Murphy, K. Cottrell, and E. Brady | Completed |   |
+
+## Technical Approach
+
+Working with longitudinal data rather than randomized observations for our research project, we will be implementing the quasi-experimental method of RDD analyses to quantitatively evaluate the influence of CI on security bug resolution and commit patterns. RDD is often applied with time-series data and can be used to model the magnitude of a discontinuity among the values of a function just before and after a particular intervention. RDD is considered as one of the more robust quasi-experimental designs, and is based on the assumption that in the absence of an intervention, the function would continue displaying the same trend as displayed prior to that intervention. Considering this assumption, it is possible to gauge how much of an effect an intervention has on the data not only at the time of the intervention, but over time as well. In our case the intervention will be the adoption of CI, specifically Travis CI. Along with RDD we will be incorporating multiple regression to assess any influence that may have come from variables other than the intervention, such as the number of developers on a project or age of the project at the time of intervention.
+
+The two most common implementations of RDD are sharp RDD and fuzzy RDD, and for our project we will be using sharp RDD. To demonstrate this RDD method, some synthetic data was generated and used to illustrate a discontinuity.
+
+## Team 
+
+*Elias Brady*: Elias Brady is a Tennessee Ned Mcwherter Scholarship Recipient. He has been on the Dean's list each semester since he started at Tennessee Tech University, and currently maintains an institution wide GPA of 3.91 and a departmental GPA of 4.0. He has worked as a teacher's assistant for the UNIX-like systems lab as well. He is majoring in Computer Science because he loves to solve problems. Upon completion of his graduate studies, Elias is planning to work in industry for a year, go back to school for a Master's degree in robotics, and eventually become a doctorate in artificial intelligence.
+ 
+*Kaitlyn Cottrell*: Kaitlyn Cottrell is currently a Computer Science major with a concentration in Cybersecurity at Tennessee Tech University. She has a 3.86 institution wide GPA. She is a mentor-in-training for the Defense Cyber Interest group and works on the CyberPatriot outreach with local middle schools done by the group, after participating in the competition for two years in high school. She has also worked as a counselor at the GenCyber camp at Tennessee Tech in Summer 2019. 
+
+*Justin Murphy*: Justin Murphy is a senior fast-track student at Tennessee Tech University majoring in Computer Science concentrating in Cybersecurity.  He is actively involved with CEROC at Tennessee Tech and serves as the lead for the Capture the Flag (CTF) Cyber Interest Group.  He is a CyberCorps: SFS Scholar and intends to start pursuing his PhD degree in Computer Science at Tennessee Tech starting Fall '20.  He holds a previous undergraduate degree in Statistics from the University of Tennessee Knoxville (2011), and used to be a high school mathematics teacher in Nashville, Tennessee. 
+
+*Akond Rahman* (Mentor): Akond Rahman is an Assistant Professor at Tennessee Tech University. Akond has extensive experience in mining large scale open source repositories, and have used mined data for software quality analysis and vulnerability analysis. Akond's recent research related to mining software repositories and cybersecurity was recognized by ACM in 2019, and awarded the ACM SIGSOFT Distinguished Paper at ICSE, which is ranked the most prestigious venue for software engineering research.  
