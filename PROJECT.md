@@ -16,9 +16,9 @@ We focus on scientific software projects because these projects have real-world 
 
 We will answer the following research questions: 
 
-    -*RQ1*: How does continuous integration influence commit practices in open source scientific software projects?}
-    -*RQ2*: How does continuous integration influence resolution of bugs in open source scientific software projects?}
-    -*RQ3*: How does continuous integration influence resolution of security bugs in open source scientific software projects?}
+    -RQ1: How does continuous integration influence commit practices in open source scientific software projects?
+    -RQ2: How does continuous integration influence resolution of bugs in open source scientific software projects?
+    -RQ3: How does continuous integration influence resolution of security bugs in open source scientific software projects?
 
 We conduct our research project by mining security bugs that appear in our set of OSSS repositories. We will apply qualitative analysis to construct a well-grounded security bug dataset. Next, we will mine two commit patterns namely, commit frequency and commit sizes from the collected OSSS repositories. We will quantify security bugs in the collected repositories. Next, we will use we introduce regression discontinuity design analyses to quantitatively evaluate the influence of CI on security bug resolution and commit patterns.  
 
@@ -26,19 +26,19 @@ We conduct our research project by mining security bugs that appear in our set o
 
 The specific aims of our project is listed below: 
 
-    -*Repository gathering*: We will perform large-scale data analysis by collecting repositories from GitHub, a social coding platform.
-    -*Construct dataset*: We will use pattern matching and manual verification to identify security bugs reported in collected repositories. 
-    -*Quantify influence*: We will use regression discontinuity design (RDD) to assess the influence of CI on security bug resolution. Along with RDD, we will also apply change point analysis~\cite{taylor2000change} to observe at what particular value does certain patterns change. We will also study statistics of commit patterns, and apply RDD to observe if CI infleunces commit patterns of developers.     
+    -Repository gathering: We will perform large-scale data analysis by collecting repositories from GitHub, a social coding platform.
+    -Construct dataset: We will use pattern matching and manual verification to identify security bugs reported in collected repositories. 
+    -Quantify influence: We will use regression discontinuity design (RDD) to assess the influence of CI on security bug resolution. Along with RDD, we will also apply change point analysis~\cite{taylor2000change} to observe at what particular value does certain patterns change. We will also study statistics of commit patterns, and apply RDD to observe if CI infleunces commit patterns of developers.     
 
     Each task and corresponding deadline is listed in Table~\ref{table-timeline}. Details on each task is listed below: 
 
-    -_Task-Bid submission_: We will bid for our proposed project by briefly describing our plans.
-    -_Task-Repository mining_: We will use Google Big Query to collect repositories that are developed in the Julia programming language. We will use repository signals to filter out irrelevant repositories.  
-    -_Task-Grounded security bug dataset construction_: We will use pattern matching as well as manual verification to identify which commits are related to security bugs. 
-    -_Task-Commit pattern mining_: We will mine commit size and commit frequency patterns before and after adoption of CI. 
-    -_Task-Proposal submission_: We will submit a document that lays out our proposed research methodology and preliminary results.  
-    -_Task-Regression analyses_: We will use RDD to quantify if adoption of CI impacts security bug resolution and commit patterns. 
-    -_Task-Progress Report_: We will report our progress so far as a document. 
-    -_Task-Final Report_: We will submit the findings from our research study with appropriate sections namely, introduction, methodology, and threats to validity. 
-    -_Task-Final Presentation_: The team members will present findings formally in front of other InSure participants
+    -Task-Bid submission: We will bid for our proposed project by briefly describing our plans.
+    -Task-Repository mining: We will use Google Big Query to collect repositories that are developed in the Julia programming language. We will use repository signals to filter out irrelevant repositories.  
+    -Task-Grounded security bug dataset construction: We will use pattern matching as well as manual verification to identify which commits are related to security bugs. 
+    -Task-Commit pattern mining: We will mine commit size and commit frequency patterns before and after adoption of CI. 
+    -Task-Proposal submission: We will submit a document that lays out our proposed research methodology and preliminary results.  
+    -Task-Regression analyses: We will use RDD to quantify if adoption of CI impacts security bug resolution and commit patterns. 
+    -Task-Progress Report: We will report our progress so far as a document. 
+    -Task-Final Report: We will submit the findings from our research study with appropriate sections namely, introduction, methodology, and threats to validity. 
+    -Task-Final Presentation: The team members will present findings formally in front of other InSure participants
 
