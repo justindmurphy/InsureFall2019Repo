@@ -51,8 +51,8 @@ For each task we provide the status below:
 | Grounded security bug dataset construction | Sep 27, 2019 | Elyas Brady   and Kaitlyn Cottrell   | Completed |   |
 | Commit pattern mining                      | Oct 04, 2019 | Justin Murphy and Kaitlyn Cottrell   | Completed |   |
 | Proposal submission                        | Oct 04, 2019 | Justin Murphy                        | Completed |   |
-| Regression Analyeses                       | Oct 25, 2019 | Elyas Brady                          | Completed |   |
-| Final Report Submission                    | Dec 06, 2019 | J. Murphy, K. Cottrell, and E. Brady | Completed |   |
+| Regression Analyeses                       | Oct 25, 2019 | Elyas Brady                          | Pending   |   |
+| Final Report Submission                    | Dec 06, 2019 | J. Murphy, K. Cottrell, and E. Brady | Pending   |   |
 
 ## Technical Approach
 
@@ -69,3 +69,14 @@ The two most common implementations of RDD are sharp RDD and fuzzy RDD, and for 
 *Justin Murphy*: Justin Murphy is a senior fast-track student at Tennessee Tech University majoring in Computer Science concentrating in Cybersecurity.  He is actively involved with CEROC at Tennessee Tech and serves as the lead for the Capture the Flag (CTF) Cyber Interest Group.  He is a CyberCorps: SFS Scholar and intends to start pursuing his PhD degree in Computer Science at Tennessee Tech starting Fall '20.  He holds a previous undergraduate degree in Statistics from the University of Tennessee Knoxville (2011), and used to be a high school mathematics teacher in Nashville, Tennessee. 
 
 *Akond Rahman* (Mentor): Akond Rahman is an Assistant Professor at Tennessee Tech University. Akond has extensive experience in mining large scale open source repositories, and have used mined data for software quality analysis and vulnerability analysis. Akond's recent research related to mining software repositories and cybersecurity was recognized by ACM in 2019, and awarded the ACM SIGSOFT Distinguished Paper at ICSE, which is ranked the most prestigious venue for software engineering research.  
+
+
+## About INSuRE
+
+From the [INSuRE webpage](http://insurehub.org/): 
+
+> The INSuRE (Information Security Research and Education) project aims to build research skills and experience for graduate students through a research network between CAE-Rs (Centers of Academic Excellence in Research) in Information Assurance/Cyber Defense. Through the project, students engage in interdisciplinary, distributed-team research on tasks in the national information security domain. The students learn research by doing, building skills, expertise, and connections that will enable them to hit the ground running faster on information assurance research projects later in their careers.
+The project backs a project-based research class, offered simultaneously and online at multiple institutions in the network. Students may also participate in parallel as research assistants, through research experiences, or for research credit; while the vast majority of INSuRE students have entered through the class, several students have entered or stayed attached to the network through other means.
+In the class, students bid on and propose work on problems that have been contributed by problem sponsors. Research teams are formed and check in with technical advisors at these sponsors. Teleconferencing technology is used to connect students in simultaneous class sessions for problem overviews, student presentations, and other resource presentations. Students prepare formal proposal and report documents, and learn to work with mentors (and sometimes teammates) who are not co-located. 
+
+> This work has been supported in part by the National Science Foundation under a variety of grants including an Eager grant (1344369), supplements to several SFS and other grants (1241576, 1433753, 1433690, 1241668, 1433795, 1241576, 1241668). The National Security Agency has supported INSuRE 2.0 via collaborative CAE-R grants to DSU (H98230-15-1-0298), Stevens (H98230-15-1-0299), and Purdue (H98230-15-1-0300) and is currently supporting INSuRE 3.0 through an award to Purdue (H98230-17-1-0314) among others. A small Intel grant to Purdue is available to pay for equipment upon request.
