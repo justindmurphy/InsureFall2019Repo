@@ -29,7 +29,7 @@ def parseFileName(file_list):
     return final_str
     
 def performPCA(allFeatures, pca_comp=1000, explained_var=True):
-    pca_xform_comp_dict = {1:1, 5:4, 10:4, 20:5, 30:5, 40:5, 50:5}
+    pca_xform_comp_dict = {1:1, 4:3, 5:4, 10:4, 20:5, 30:5, 40:5, 50:5}
     selected_features = None
     pcaObj = decomposition.PCA(n_components=pca_comp)
 
@@ -45,7 +45,7 @@ def performPCA(allFeatures, pca_comp=1000, explained_var=True):
     else: 
         pcaObj.n_components = pca_xform_comp_dict[pca_comp]
         selected_features   = pcaObj.fit_transform(allFeatures)
-        print "Selected feature dataset size:", np.shape(selected_features)
+        print "Dimension of PCA feature set size:", np.shape(selected_features)
         print "-"*50
     return selected_features
 
@@ -101,8 +101,6 @@ def filterTFIDF(result, topK = 5):
            print '_'*25
     return tfidfDict 
 
-
-
 def performTFIDF(mod_files_list, pkl_file_name): 
     # mod_files_list is a list of  strings, each string corresponds to files modified in a  commit  
     commitCnt           = len(mod_files_list) 
@@ -144,12 +142,20 @@ if __name__=='__main__':
     full_dataset = pd.read_csv(csc4220data) 
     # print 'Before filtering:', full_dataset.shape
     # print '*'*50 
-    dataset_with_valid_files = full_dataset[full_dataset['MODIFIED_FILE'].str.contains('/|.', na=False)]
-    dataset_with_valid_files = dataset_with_valid_files[~dataset_with_valid_files['MODIFIED_FILE'].str.contains('---', na=False)]
-    dataset_with_valid_files = dataset_with_valid_files[~dataset_with_valid_files['MODIFIED_FILE'].str.contains('-', na=False)]
-    dataset_with_valid_files = dataset_with_valid_files[~dataset_with_valid_files['MODIFIED_FILE'].str.isdigit()]
-    # #print dataset_with_valid_files.head()
-    print 'After filtering:', dataset_with_valid_files.shape   
+    # dataset_with_valid_files = full_dataset[full_dataset['MODIFIED_FILE'].str.contains('/|.', na=False)]
+    # dataset_with_valid_files = dataset_with_valid_files[~dataset_with_valid_files['MODIFIED_FILE'].str.contains('---', na=False)]
+    # dataset_with_valid_files = dataset_with_valid_files[~dataset_with_valid_files['MODIFIED_FILE'].str.contains('-', na=False)]
+    # dataset_with_valid_files = dataset_with_valid_files[~dataset_with_valid_files['MODIFIED_FILE'].str.isdigit()]
+    # # #print dataset_with_valid_files.head()
+    # print 'After filtering:', dataset_with_valid_files.shape   
+
+    dataframe_for_prediction = full_dataset.drop_duplicates(['HASH'], keep='last')
+    dataframe_for_prediction = dataframe_for_prediction.drop(['HASH', 'MODIFIED_FILE', 'REPO', 'TIME', 'DEV_EXP', 'DEV_RECENT', 'SECU_FLAG'], axis=1)
+    print dataframe_for_prediction.head()
+    numpy_dataframe_pred = dataframe_for_prediction.as_matrix()
+    print numpy_dataframe_pred 
+    print type(numpy_dataframe_pred)
+
 
     # get the giant TFIDF pickle 
     # tfidf_list_full , labels_full = prepareForTFIDF(dataset_with_valid_files)   
@@ -159,22 +165,32 @@ if __name__=='__main__':
     # ###get full TFIDF matrix 
     # full_tfidf_matrix = pickle.load(open('FULL_TFIDF.PKL', 'rb'))
     # ###filter IFIDF , take top K tokens based on TFIDF scores : 1, 5, 10, 20, 30, 50
-    top_k = 40
+    top_k = 1
     # ###
     # filteredTFIDFDict= filterTFIDF(full_tfidf_matrix, top_k) 
     # pickle.dump(filteredTFIDFDict, open('FILTERED_TFIDF.PKL', 'wb')) 
-    pkl_dict_file = 'TOP'+ str(40) +'_FILTERED_TFIDF.PKL'
-    filtered_tfidf_dict = pickle.load(open(pkl_dict_file, 'rb')) 
-    pca_list = []
-    for k_, v_ in filtered_tfidf_dict.iteritems():
-        pca_list.append(v_[0]) # get TFIDF scores 
-    pca_array = np.array(pca_list) 
-    pca_mod_features =  performPCA(pca_array, top_k, False)   
-    dep_variable = dataset_with_valid_files.drop_duplicates(['HASH'], keep='last')
-    # print 'Labels:', len(dep_variable)
-    # pickle.dump( dep_variable, open( 'CSC4220_ALL_LABELS.PKL' , 'wb')) 
+    # pkl_dict_file = 'TOP'+ str(top_k) +'_FILTERED_TFIDF.PKL'
+    # filtered_tfidf_dict = pickle.load(open(pkl_dict_file, 'rb')) 
+    # pca_list = []
+    # for k_, v_ in filtered_tfidf_dict.iteritems():
+    #     tfidf_scores = v_[0] 
+    #     tfidf_scores = [round(z_, 2) for z_ in tfidf_scores ]
+    #     pca_list.append(tfidf_scores) # get TFIDF scores 
+    # pca_array = np.array(pca_list) 
+    # pca_mod_features =  performPCA(pca_array, top_k, False)   
+    pca_mod_features = performPCA(numpy_dataframe_pred, 4, False )
+    label_list = full_dataset.drop_duplicates(['HASH'], keep='last')['SECU_FLAG'].tolist() 
+    dep_var_list = []
+    for flag in label_list:
+        if flag == 'INSECURE':
+            dep_var_list.append(1)
+        else: 
+            dep_var_list.append(0)
+    dep_var_list = np.array(dep_var_list) 
+    print 'Labels:', len(dep_var_list)
+    print 'Starting model building ...'
     iterDumpDir_       = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/teaching/ProjectMaterials/output/'
-    sklearn_models.performIterativeModeling(pca_mod_features, dep_variable, 10, 10, iterDumpDir_)
+    sklearn_models.performIterativeModeling(pca_mod_features, dep_var_list, 10, 10, iterDumpDir_)
 
 
     print 'Ended at:', giveTimeStamp()

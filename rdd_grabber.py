@@ -37,7 +37,6 @@ def getHashesForDate(proj_, day_list, full_df ):
     return hash_list 
 
 
-
 def getBeforeAfterCIDate(travis_dict, df_, days_cutoff=60):
     proj_hash_dict = {}
     for proj_name, ci_start_date in travis_dict.iteritems():
@@ -144,7 +143,7 @@ def generateDataset(dic_, commit_df, bug_df, secu_df, dev_df, cutoff_days, csv_o
 
 
 if __name__=='__main__':
-   days_ = 60 
+   days_ = 30
    travis_ci_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/TRAVIS_START_TIME_DATE.csv'
    travis_ci_df_  = pd.read_csv(travis_ci_file) 
 
@@ -153,7 +152,8 @@ if __name__=='__main__':
 
    proj_travis_date_dict = getTravisStartDate(travis_ci_df_) 
 
-   proj_secu_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_SECU_COMM.csv' 
+   #proj_secu_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_SECU_COMM.csv' 
+   proj_secu_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_SECU_COMM_ELYAS.csv'    
    proj_secu_df_  = pd.read_csv(proj_secu_file)  
    proj_secu_df_['DATE'] = proj_secu_df_['TIME'].apply(getDate)
    #print proj_secu_df_
@@ -168,6 +168,6 @@ if __name__=='__main__':
    dev_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_DEVS.csv' 
    dev_df_  = pd.read_csv(dev_file)     
 
-   rdd_out_file =  '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/FULL_RDD_DATASET.csv'
+   rdd_out_file =  '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/FULL_RDD_DATASET_FINAL.csv'
    generateDataset(all_proj_before_after_hash_dict, comm_size_df_, buggy_df_, proj_secu_df_, dev_df_ , days_,  rdd_out_file) 
 

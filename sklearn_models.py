@@ -40,9 +40,10 @@ def dumpPredPerfValuesToFile(iterations, predPerfVector, fileName):
 
 def evalClassifier(actualLabels, predictedLabels):
 
-  target_labels =  ['N', 'Y']
-
   print "Confusion matrix start"
+  # print len(actualLabels) , len(predictedLabels)
+  # print actualLabels , predictedLabels
+  print type(actualLabels) , type(predictedLabels) 
   conf_matr_output = pd.crosstab(actualLabels, predictedLabels, rownames=['True'], colnames=['Predicted'], margins=True)
   print conf_matr_output
   print "Confusion matrix end"
@@ -105,24 +106,6 @@ def performNaiveBayes(featureParam, labelParam, foldParam, infoP):
   return gnb_area_under_roc
 
 
-
-def performModeling(features, labels, foldsParam):
-  #r_, c_ = np.shape(features)
-  ### lets do CART (decision tree)
-  performCART(features, labels, foldsParam, "CART")
-  print "="*100
-  ### lets do RF (ensemble method: random forest)
-  performRF(features, labels, foldsParam, "RF")
-  print "="*100
-  ### lets do SVC (support vector: support-vector classification)
-  performSVC(features, labels, foldsParam, "SVC")
-  print "="*100
-  ### lets do Logistic regession
-  performLogiReg(features, labels, foldsParam, "LogiRegr")
-  print "="*100
-  ### lets do naive bayes
-  performNaiveBayes(features, labels, foldsParam, "Naive-Bayes")
-  print "="*100
 def performIterativeModeling(featureParam, labelParam, foldParam, iterationP, outputDirParam):
   cart_prec_holder, cart_recall_holder, holder_cart, cart_fmeasure_holder = [], [], [], []
   rf_prec_holder,   rf_recall_holder,   holder_rf, rf_fmeasure_holder   = [], [], [], []
@@ -130,52 +113,52 @@ def performIterativeModeling(featureParam, labelParam, foldParam, iterationP, ou
   logi_prec_holder, logi_recall_holder, holder_logi, logi_fmeasure_holder = [], [], [], []
   nb_prec_holder,   nb_recall_holder,   holder_nb, nb_fmeasure_holder   = [], [], [], []
   for ind_ in xrange(iterationP):
-    ## iterative modeling for CART
-    cart_area_roc, cart_prec_, cart_recall_, cart_fmeasure_ = performCART(featureParam, labelParam, foldParam, "CART")
-    holder_cart.append(cart_area_roc)
-    cart_prec_holder.append(cart_prec_)
-    cart_recall_holder.append(cart_recall_)
-    cart_fmeasure_holder.append(cart_fmeasure_)
-    cart_area_roc = float(0)
-    cart_prec_    = float(0)
-    cart_recall_  = float(0)
-    cart_fmeasure_ = float(0)
+    # ## iterative modeling for CART
+    # cart_area_roc, cart_prec_, cart_recall_, cart_fmeasure_ = performCART(featureParam, labelParam, foldParam, "CART")
+    # holder_cart.append(cart_area_roc)
+    # cart_prec_holder.append(cart_prec_)
+    # cart_recall_holder.append(cart_recall_)
+    # cart_fmeasure_holder.append(cart_fmeasure_)
+    # cart_area_roc = float(0)
+    # cart_prec_    = float(0)
+    # cart_recall_  = float(0)
+    # cart_fmeasure_ = float(0)
 
-    ## iterative modeling for RF
-    rf_area_roc, rf_prec_, rf_recall_, rf_fmeasure_ = performRF(featureParam, labelParam, foldParam, "Rand. Forest")
-    holder_rf.append(rf_area_roc)
-    rf_prec_holder.append(rf_prec_)
-    rf_recall_holder.append(rf_recall_)
-    rf_fmeasure_holder.append(rf_fmeasure_)
-    rf_area_roc = float(0)
-    rf_prec_    = float(0)
-    rf_recall_  = float(0)
-    rf_fmeasure_ = float(0)
+    # ## iterative modeling for RF
+    # rf_area_roc, rf_prec_, rf_recall_, rf_fmeasure_ = performRF(featureParam, labelParam, foldParam, "Rand. Forest")
+    # holder_rf.append(rf_area_roc)
+    # rf_prec_holder.append(rf_prec_)
+    # rf_recall_holder.append(rf_recall_)
+    # rf_fmeasure_holder.append(rf_fmeasure_)
+    # rf_area_roc = float(0)
+    # rf_prec_    = float(0)
+    # rf_recall_  = float(0)
+    # rf_fmeasure_ = float(0)
 
-    ## iterative modeling for SVC
-    svc_area_roc, svc_prec_, svc_recall_, svc_fmeasure_ = performSVC(featureParam, labelParam, foldParam, "Supp. Vector Classi.")
+    # ## iterative modeling for SVC
+    # svc_area_roc, svc_prec_, svc_recall_, svc_fmeasure_ = performSVC(featureParam, labelParam, foldParam, "Supp. Vector Classi.")
 
-    holder_svc.append(svc_area_roc)
-    svc_prec_holder.append(svc_prec_)
-    svc_recall_holder.append(svc_recall_)
-    svc_fmeasure_holder.append(svc_fmeasure_)
-    svc_area_roc = float(0)
-    svc_prec_    = float(0)
-    svc_recall_  = float(0)
-    svc_fmeasure_ = float(0)
+    # holder_svc.append(svc_area_roc)
+    # svc_prec_holder.append(svc_prec_)
+    # svc_recall_holder.append(svc_recall_)
+    # svc_fmeasure_holder.append(svc_fmeasure_)
+    # svc_area_roc = float(0)
+    # svc_prec_    = float(0)
+    # svc_recall_  = float(0)
+    # svc_fmeasure_ = float(0)
 
 
-    ## iterative modeling for logistic regression
-    logi_reg_area_roc, logi_reg_preci_, logi_reg_recall, logi_reg_fmeasure = performLogiReg(featureParam, labelParam, foldParam, "Logi. Regression Classi.")
+    # ## iterative modeling for logistic regression
+    # logi_reg_area_roc, logi_reg_preci_, logi_reg_recall, logi_reg_fmeasure = performLogiReg(featureParam, labelParam, foldParam, "Logi. Regression Classi.")
 
-    holder_logi.append(logi_reg_area_roc)
-    logi_prec_holder.append(logi_reg_preci_)
-    logi_recall_holder.append(logi_reg_recall)
-    logi_fmeasure_holder.append(logi_reg_fmeasure)
-    logi_reg_area_roc = float(0)
-    logi_reg_preci_   = float(0)
-    logi_reg_recall   = float(0)
-    logi_reg_fmeasure = float(0)
+    # holder_logi.append(logi_reg_area_roc)
+    # logi_prec_holder.append(logi_reg_preci_)
+    # logi_recall_holder.append(logi_reg_recall)
+    # logi_fmeasure_holder.append(logi_reg_fmeasure)
+    # logi_reg_area_roc = float(0)
+    # logi_reg_preci_   = float(0)
+    # logi_reg_recall   = float(0)
+    # logi_reg_fmeasure = float(0)
 
     ## iterative modeling for naiev bayes
     nb_area_roc, nb_preci_, nb_recall, nb_fmeasure = performNaiveBayes(featureParam, labelParam, foldParam, "Naive Bayes")
@@ -188,88 +171,88 @@ def performIterativeModeling(featureParam, labelParam, foldParam, iterationP, ou
     nb_recall   = float(0)
     nb_fmeasure = float(0)
 
-  print "-"*50
-  print "Summary: AUC, for:{}, mean:{}, median:{}, max:{}, min:{}".format("CART", np.mean(holder_cart),
-                                                                          np.median(holder_cart), max(holder_cart),
-                                                                          min(holder_cart))
-  print "*"*25
-  print "Summary: Precision, for:{}, mean:{}, median:{}, max:{}, min:{}".format("CART", np.mean(cart_prec_holder),
-                                                                          np.median(cart_prec_holder), max(cart_prec_holder),
-                                                                          min(cart_prec_holder))
-  print "*"*25
-  print "Summary: Recall, for:{}, mean:{}, median:{}, max:{}, min:{}".format("CART", np.mean(cart_recall_holder),
-                                                                          np.median(cart_recall_holder), max(cart_recall_holder),
-                                                                          min(cart_recall_holder))
-  print "*"*25
-  print "Summary: F-Measure, for:{}, mean:{}, median:{}, max:{}, min:{}".format("CART", np.mean(cart_fmeasure_holder),
-                                                                          np.median(cart_fmeasure_holder), max(cart_fmeasure_holder),
-                                                                          min(cart_fmeasure_holder))
-  print "*"*25
-  cart_all_pred_perf_values = (holder_cart, cart_fmeasure_holder, cart_prec_holder, cart_recall_holder)
-  # dumpPredPerfValuesToFile(iterationP, cart_all_pred_perf_values, outputDirParam +  'PRED_PERF_CART.csv')
-  print "-"*50
+  # print "-"*50
+  # print "Summary: AUC, for:{}, mean:{}, median:{}, max:{}, min:{}".format("CART", np.mean(holder_cart),
+  #                                                                         np.median(holder_cart), max(holder_cart),
+  #                                                                         min(holder_cart))
+  # print "*"*25
+  # print "Summary: Precision, for:{}, mean:{}, median:{}, max:{}, min:{}".format("CART", np.mean(cart_prec_holder),
+  #                                                                         np.median(cart_prec_holder), max(cart_prec_holder),
+  #                                                                         min(cart_prec_holder))
+  # print "*"*25
+  # print "Summary: Recall, for:{}, mean:{}, median:{}, max:{}, min:{}".format("CART", np.mean(cart_recall_holder),
+  #                                                                         np.median(cart_recall_holder), max(cart_recall_holder),
+  #                                                                         min(cart_recall_holder))
+  # print "*"*25
+  # print "Summary: F-Measure, for:{}, mean:{}, median:{}, max:{}, min:{}".format("CART", np.mean(cart_fmeasure_holder),
+  #                                                                         np.median(cart_fmeasure_holder), max(cart_fmeasure_holder),
+  #                                                                         min(cart_fmeasure_holder))
+  # print "*"*25
+  # cart_all_pred_perf_values = (holder_cart, cart_fmeasure_holder, cart_prec_holder, cart_recall_holder)
+  # # dumpPredPerfValuesToFile(iterationP, cart_all_pred_perf_values, outputDirParam +  'PRED_PERF_CART.csv')
+  # print "-"*50
 
-  print "Summary: AUC, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Logi. Regression", np.mean(holder_logi),
-                                                                          np.median(holder_logi), max(holder_logi),
-                                                                          min(holder_logi))
-  print "*"*25
-  print "Summary: Precision, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Logi. Regression", np.mean(logi_prec_holder),
-                                                                            np.median(logi_prec_holder), max(logi_prec_holder),
-                                                                            min(logi_prec_holder))
-  print "*"*25
-  print "Summary: Recall, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Logi. Regression", np.mean(logi_recall_holder),
-                                                                            np.median(logi_recall_holder), max(logi_recall_holder),
-                                                                            min(logi_recall_holder))
-  print "*"*25
+  # print "Summary: AUC, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Logi. Regression", np.mean(holder_logi),
+  #                                                                         np.median(holder_logi), max(holder_logi),
+  #                                                                         min(holder_logi))
+  # print "*"*25
+  # print "Summary: Precision, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Logi. Regression", np.mean(logi_prec_holder),
+  #                                                                           np.median(logi_prec_holder), max(logi_prec_holder),
+  #                                                                           min(logi_prec_holder))
+  # print "*"*25
+  # print "Summary: Recall, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Logi. Regression", np.mean(logi_recall_holder),
+  #                                                                           np.median(logi_recall_holder), max(logi_recall_holder),
+  #                                                                           min(logi_recall_holder))
+  # print "*"*25
 
-  print "Summary: F-Measure, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Logi. Regression", np.mean(logi_fmeasure_holder),
-                                                                            np.median(logi_fmeasure_holder), max(logi_fmeasure_holder),
-                                                                            min(logi_fmeasure_holder))
-  print "*"*25
-  logireg_all_pred_perf_values = (holder_logi, logi_fmeasure_holder, logi_prec_holder, logi_recall_holder)
-  # dumpPredPerfValuesToFile(iterationP, logireg_all_pred_perf_values, outputDirParam + 'PRED_PERF_LOGIREG.csv')
-  print "-"*50
+  # print "Summary: F-Measure, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Logi. Regression", np.mean(logi_fmeasure_holder),
+  #                                                                           np.median(logi_fmeasure_holder), max(logi_fmeasure_holder),
+  #                                                                           min(logi_fmeasure_holder))
+  # print "*"*25
+  # logireg_all_pred_perf_values = (holder_logi, logi_fmeasure_holder, logi_prec_holder, logi_recall_holder)
+  # # dumpPredPerfValuesToFile(iterationP, logireg_all_pred_perf_values, outputDirParam + 'PRED_PERF_LOGIREG.csv')
+  # print "-"*50
 
-  print "Summary: AUC, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Rand. Forest", np.mean(holder_rf),
-                                                                          np.median(holder_rf), max(holder_rf),
-                                                                          min(holder_rf))
-  print "*"*25
-  print "Summary: Precision, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Rand. Forest", np.mean(rf_prec_holder),
-                                                                          np.median(rf_prec_holder), max(rf_prec_holder),
-                                                                          min(rf_prec_holder))
-  print "*"*25
-  print "Summary: Recall, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Rand. Forest", np.mean(rf_recall_holder),
-                                                                          np.median(rf_recall_holder), max(rf_recall_holder),
-                                                                          min(rf_recall_holder))
-  print "*"*25
-  print "Summary: F-Measure, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Rand. Forest", np.mean(rf_fmeasure_holder),
-                                                                          np.median(rf_fmeasure_holder), max(rf_fmeasure_holder),
-                                                                          min(rf_fmeasure_holder))
-  print "*"*25
-  rf_all_pred_perf_values = (holder_rf, rf_fmeasure_holder, rf_prec_holder, rf_recall_holder)
-  # dumpPredPerfValuesToFile(iterationP, rf_all_pred_perf_values, outputDirParam +  'PRED_PERF_RF.csv')
-  print "-"*50
+  # print "Summary: AUC, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Rand. Forest", np.mean(holder_rf),
+  #                                                                         np.median(holder_rf), max(holder_rf),
+  #                                                                         min(holder_rf))
+  # print "*"*25
+  # print "Summary: Precision, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Rand. Forest", np.mean(rf_prec_holder),
+  #                                                                         np.median(rf_prec_holder), max(rf_prec_holder),
+  #                                                                         min(rf_prec_holder))
+  # print "*"*25
+  # print "Summary: Recall, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Rand. Forest", np.mean(rf_recall_holder),
+  #                                                                         np.median(rf_recall_holder), max(rf_recall_holder),
+  #                                                                         min(rf_recall_holder))
+  # print "*"*25
+  # print "Summary: F-Measure, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Rand. Forest", np.mean(rf_fmeasure_holder),
+  #                                                                         np.median(rf_fmeasure_holder), max(rf_fmeasure_holder),
+  #                                                                         min(rf_fmeasure_holder))
+  # print "*"*25
+  # rf_all_pred_perf_values = (holder_rf, rf_fmeasure_holder, rf_prec_holder, rf_recall_holder)
+  # # dumpPredPerfValuesToFile(iterationP, rf_all_pred_perf_values, outputDirParam +  'PRED_PERF_RF.csv')
+  # print "-"*50
 
-  print "Summary: AUC, for:{}, mean:{}, median:{}, max:{}, min:{}".format("S. Vec. Class.", np.mean(holder_svc),
-                                                                          np.median(holder_svc), max(holder_svc),
-                                                                          min(holder_svc))
-  print "*"*25
-  print "Summary: Precision, for:{}, mean:{}, median:{}, max:{}, min:{}".format("S. Vec. Class.", np.mean(svc_prec_holder),
-                                                                            np.median(svc_prec_holder), max(svc_prec_holder),
-                                                                            min(svc_prec_holder))
-  print "*"*25
-  print "Summary: Recall, for:{}, mean:{}, median:{}, max:{}, min:{}".format("S. Vec. Class.", np.mean(svc_recall_holder),
-                                                                            np.median(svc_recall_holder), max(svc_recall_holder),
-                                                                            min(svc_recall_holder))
-  print "*"*25
-  print "Summary: F-Measure, for:{}, mean:{}, median:{}, max:{}, min:{}".format("S. Vec. Class", np.mean(svc_fmeasure_holder),
-                                                                          np.median(svc_fmeasure_holder), max(svc_fmeasure_holder),
-                                                                          min(svc_fmeasure_holder))
-  print "*"*25
+  # print "Summary: AUC, for:{}, mean:{}, median:{}, max:{}, min:{}".format("S. Vec. Class.", np.mean(holder_svc),
+  #                                                                         np.median(holder_svc), max(holder_svc),
+  #                                                                         min(holder_svc))
+  # print "*"*25
+  # print "Summary: Precision, for:{}, mean:{}, median:{}, max:{}, min:{}".format("S. Vec. Class.", np.mean(svc_prec_holder),
+  #                                                                           np.median(svc_prec_holder), max(svc_prec_holder),
+  #                                                                           min(svc_prec_holder))
+  # print "*"*25
+  # print "Summary: Recall, for:{}, mean:{}, median:{}, max:{}, min:{}".format("S. Vec. Class.", np.mean(svc_recall_holder),
+  #                                                                           np.median(svc_recall_holder), max(svc_recall_holder),
+  #                                                                           min(svc_recall_holder))
+  # print "*"*25
+  # print "Summary: F-Measure, for:{}, mean:{}, median:{}, max:{}, min:{}".format("S. Vec. Class", np.mean(svc_fmeasure_holder),
+  #                                                                         np.median(svc_fmeasure_holder), max(svc_fmeasure_holder),
+  #                                                                         min(svc_fmeasure_holder))
+  # print "*"*25
 
-  svc_all_pred_perf_values = (holder_svc, svc_fmeasure_holder, svc_prec_holder, svc_recall_holder)
-  # dumpPredPerfValuesToFile(iterationP, svc_all_pred_perf_values, outputDirParam +  'PRED_PERF_SVC.csv')
-  print "-"*50
+  # svc_all_pred_perf_values = (holder_svc, svc_fmeasure_holder, svc_prec_holder, svc_recall_holder)
+  # # dumpPredPerfValuesToFile(iterationP, svc_all_pred_perf_values, outputDirParam +  'PRED_PERF_SVC.csv')
+  # print "-"*50
 
   print "Summary: AUC, for:{}, mean:{}, median:{}, max:{}, min:{}".format("Naive Bayes", np.mean(holder_nb),
                                                                           np.median(holder_nb), max(holder_nb),
