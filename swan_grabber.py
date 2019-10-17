@@ -37,14 +37,6 @@ def getHashesForDate(proj_, day_list, full_df ):
         hash_list.append(hash_)
     return hash_list 
 
-def getHashesForDate(proj_, day_list, full_df ):
-    hash_list = []
-    proj_df =  full_df[full_df['REPO']==proj_]
-    for day_ in day_list:
-        hash_ = proj_df[proj_df['DATE']==day_]['HASH'].tolist()[0]
-        hash_list.append(hash_)
-    return hash_list 
-
 def getValuesForHash(repo_, hash_, comm_df, bug_df_, secu_df_):
     bug_cnt, sec_cnt, mer_cnt  = 0 , 0 , 0
     repo_df    = comm_df[comm_df['REPO']==repo_]
@@ -66,7 +58,7 @@ def getValuesForHash(repo_, hash_, comm_df, bug_df_, secu_df_):
 
 def getBeforeAfterCIDate(travis_dict, df_, days_cutoff=60):
     proj_hash_dict = {}
-    for proj_name, ci_start_date in travis_dict.iteritems():
+    for proj_name, ci_start_date in travis_dict.items():
         proj_dates = df_[df_['REPO']==proj_name]['DATE'].tolist()
         before_ci_dates = [x_ for x_ in proj_dates if x_ <= ci_start_date ] 
         after_ci_dates  = [x_ for x_ in proj_dates if x_ > ci_start_date ] 
@@ -79,7 +71,7 @@ def getBeforeAfterCIDate(travis_dict, df_, days_cutoff=60):
 
 def generateBoxplotData(proj_dict, comm_df, bug_df, secu_df, csv_out_file): 
     all_data_list = []
-    for k_, v_ in proj_dict.iteritems():
+    for k_, v_ in proj_dict.items():
         before_hashes, after_hashes = v_ 
         for hash_ in before_hashes:
             commi_add, commi_del, commi_tot, commi_bug, commi_sec, commi_merge = getValuesForHash(k_, hash_, comm_df, bug_df, secu_df) 
@@ -92,30 +84,30 @@ def generateBoxplotData(proj_dict, comm_df, bug_df, secu_df, csv_out_file):
             all_data_list.append(data_tuple)
 
     full_df = pd.DataFrame(all_data_list) 
-    print full_df.head() 		
+    # print full_df.head() 		
     full_df.to_csv(csv_out_file, header=['REPO', 'ADD_LOC', 'DEL_LOC', 'COMMIT_SIZE', 'BUG_COUNT', 'SEC_COUNT', 'MERGE_COUNT', 'CI_FLAG' ], index=False, encoding='utf-8')
 
 if __name__=='__main__':
    days_ = 30 
-   travis_ci_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/TRAVIS_START_TIME_DATE.csv'
-   travis_ci_df_  = pd.read_csv(travis_ci_file) 
+   travis_ci_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/TRAVIS_START_TIME_DATE.csv'
+   travis_ci_df_  = pd.read_csv(travis_ci_file, encoding = 'utf-8') 
 
    travis_ci_df_['TRAVIS_MODI_DATE'] = travis_ci_df_['TRAVIS_MODI_TIME'].apply(getDate)
    #print travis_ci_df_.head() 
 
    proj_travis_date_dict = getTravisStartDate(travis_ci_df_) 
 
-   proj_secu_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_SECU_COMM_ELYAS.csv'    
-   proj_secu_df_  = pd.read_csv(proj_secu_file)  
+   proj_secu_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/UNIQUE_SECU_COMM_ELYAS.csv'    
+   proj_secu_df_  = pd.read_csv(proj_secu_file, encoding = 'utf-8')  
    proj_secu_df_['DATE'] = proj_secu_df_['TIME'].apply(getDate)
    #print proj_secu_df_
    all_proj_before_after_hash_dict = getBeforeAfterCIDate(proj_travis_date_dict, proj_secu_df_, days_)  
 
-   comm_size_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/COMMIT_SIZE_FINAL.csv' 
-   comm_size_df_  = pd.read_csv(comm_size_file)     
+   comm_size_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/COMMIT_SIZE_FINAL.csv' 
+   comm_size_df_  = pd.read_csv(comm_size_file, encoding = 'utf-8')     
 
-   buggy_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_BUG_COMM.csv' 
-   buggy_df_  = pd.read_csv(buggy_file)     
+   buggy_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/UNIQUE_BUG_COMM.csv' 
+   buggy_df_  = pd.read_csv(buggy_file, encoding = 'utf-8')     
 
-   output_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/FULL_MEDIAN_DATASET.csv' 
+   output_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/FULL_MEDIAN_DATASET.csv' 
    generateBoxplotData(all_proj_before_after_hash_dict, comm_size_df_, buggy_df_, proj_secu_df_, output_file)  

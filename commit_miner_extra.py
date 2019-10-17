@@ -310,8 +310,9 @@ if __name__=='__main__':
     # dumpBugStatus(elgibleRepos, bug_status_csv)
 
     # getUniqueEntries(secu_out_csv_fil, 'UNIQUE_SECU_COMM.csv')
-    dev_out_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_DEVS.csv'
-    getDevEmails(elgibleRepos, dev_out_file )
+
+    # dev_out_file = '/Users/akond/Documents/AkondOneDrive/OneDrive/JobPrep-TNTU2019/research/Insure/Datasets/UNIQUE_DEVS.csv'
+    # getDevEmails(elgibleRepos, dev_out_file )
 
     print '*'*100
     print 'Ended at:', giveTimeStamp()
