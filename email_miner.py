@@ -48,7 +48,7 @@ def getDevEmailForCommit(repo_path_param, hash_):
     author_emails = author_emails[0].split(',')
     author_emails = [x_ for x_ in author_emails if len(x_) > 3 ] 
     # print(author_emails) 
-    author_emails = np.unique(author_emails) 
+    author_emails = list(np.unique(author_emails) )
     return author_emails  
 
     
@@ -81,7 +81,8 @@ def getDevEmails(projects, csv_file):
             emails = getDevEmailForCommit(repo_dir_absolute_path, commit_hash)
             full_list = full_list + emails 
             
-    emails = np.unique(emails) 
+    full_list = np.unique(full_list) 
+    print('Found {} valid emails'.format(len(full_list))) 
     bug_status_df = pd.DataFrame(full_list) 
     bug_status_df.to_csv(csv_file, header=['EMAIL'], index=False, encoding='utf-8')
 
