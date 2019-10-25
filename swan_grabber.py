@@ -87,6 +87,27 @@ def generateBoxplotData(proj_dict, comm_df, bug_df, secu_df, csv_out_file):
     # print full_df.head() 		
     full_df.to_csv(csv_out_file, header=['REPO', 'ADD_LOC', 'DEL_LOC', 'COMMIT_SIZE', 'BUG_COUNT', 'SEC_COUNT', 'MERGE_COUNT', 'CI_FLAG' ], index=False, encoding='utf-8')
 
+def getDuration(date_list):
+    min_date = min(date_list)
+    max_date = max(date_list) 
+    dura_days = abs((max_date - min_date).days)
+    return dura_days 
+
+
+def getProjectDuration(df_, out_fil):
+    proj_names = np.unique( df_['REPO'].tolist() ) 
+    full_list = []
+    for project in proj_names:
+        proj_df = df_[df_['REPO']==project] 
+        proj_dates = proj_df[proj_df['REPO']==project]['DATE'].tolist() 
+        dura_days = getDuration(proj_dates) 
+        data_tuple = (project, dura_days)
+        full_list.append(data_tuple) 
+    data_df = pd.DataFrame(full_list) 
+    data_df.to_csv(out_fil, header=['PROJECT', 'DURATION(DAYS)'])
+    
+
+
 if __name__=='__main__':
    days_ = 30 
    travis_ci_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/TRAVIS_START_TIME_DATE.csv'
@@ -110,4 +131,7 @@ if __name__=='__main__':
    buggy_df_  = pd.read_csv(buggy_file, encoding = 'utf-8')     
 
    output_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/FULL_MEDIAN_DATASET.csv' 
-   generateBoxplotData(all_proj_before_after_hash_dict, comm_size_df_, buggy_df_, proj_secu_df_, output_file)  
+   #generateBoxplotData(all_proj_before_after_hash_dict, comm_size_df_, buggy_df_, proj_secu_df_, output_file)  
+
+   proj_dura_output_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/PROJ_DURA_DATASET.csv'
+   getProjectDuration(proj_secu_df_, proj_dura_output_file) 
