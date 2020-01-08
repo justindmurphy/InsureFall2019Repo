@@ -104,8 +104,44 @@ def getProjectDuration(df_, out_fil):
         data_tuple = (project, dura_days)
         full_list.append(data_tuple) 
     data_df = pd.DataFrame(full_list) 
-    data_df.to_csv(out_fil, header=['PROJECT', 'DURATION(DAYS)'])
-    
+    data_df.to_csv(out_fil, header=['PROJECT', 'DURATION_DAYS'] , index=False, encoding='utf-8')
+
+
+def getHotSoSResults():
+    all_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/ALL_SECU_COMM.csv'
+    rdd_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/FULL_RDD_DATASET_FINAL_30DAYS.csv'
+    all_df   = pd.read_csv(all_file) 
+    rdd_df   = pd.read_csv(rdd_file) 
+
+    rdd_repos   = np.unique( rdd_df['REPO'].tolist()  )
+    rdd_all_commits, rdd_all_neutral, rdd_all_insecure = [], [], [] 
+    dump_list = []
+    for repo_ in rdd_repos:
+        repo_df = all_df[all_df['REPO']==repo_]
+        repo_rdd_commits  = np.unique( repo_df['HASH'].tolist()  )
+        repo_rdd_insecure = np.unique( repo_df[repo_df['SECU_FLAG']=='INSECURE']['HASH'].tolist()  )
+        repo_rdd_neutral  = np.unique( repo_df[repo_df['SECU_FLAG']=='NEUTRAL']['HASH'].tolist()  ) 
+        for x_ in repo_rdd_commits:
+            rdd_all_commits.append(x_) 
+        for x_ in repo_rdd_insecure:
+            rdd_all_insecure.append(x_) 
+        for x_ in repo_rdd_neutral:
+            rdd_all_neutral.append(x_) 
+        for hash_ in repo_rdd_commits:
+            hash_df   = repo_df[repo_df['HASH']==hash_]
+            secu_flag = hash_df['SECU_FLAG'].tolist()[0]
+            tuple_    = (repo_, hash_, secu_flag) 
+            dump_list.append(tuple_)
+    df_ = pd.DataFrame(dump_list)
+    df_.to_csv('HOTSOS2020_SCI_SOFT_SECU.csv', header=['REPO', 'HASH' , 'LABEL'] , index=False, encoding='utf-8')    
+
+    print('='*100)
+    print('REPO_COUNT:{}, SECU_PER_REPO:{}'.format(len(rdd_repos), float(len(rdd_all_insecure))/float( len(rdd_repos) ) ))
+    print('='*100)
+    print('COMMIT_COUNT:{}, INSECURE:{}, PROPORTION:{}'.format(len(rdd_all_commits), len(rdd_all_insecure) , float(len(rdd_all_insecure))/float( len(rdd_all_commits) ) ))
+    print('='*100)    
+    print('COMMIT_COUNT:{}, REPO_COUNT:{}, COMMIT_PER_REPO:{}'.format(len(rdd_all_commits), len(rdd_repos), float(len(rdd_all_commits))/float( len(rdd_repos) ) ))
+    print('='*100)    
 
 
 if __name__=='__main__':
@@ -122,7 +158,7 @@ if __name__=='__main__':
    proj_secu_df_  = pd.read_csv(proj_secu_file, encoding = 'utf-8')  
    proj_secu_df_['DATE'] = proj_secu_df_['TIME'].apply(getDate)
    #print proj_secu_df_
-   all_proj_before_after_hash_dict = getBeforeAfterCIDate(proj_travis_date_dict, proj_secu_df_, days_)  
+   #all_proj_before_after_hash_dict = getBeforeAfterCIDate(proj_travis_date_dict, proj_secu_df_, days_)  
 
    comm_size_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/COMMIT_SIZE_FINAL.csv' 
    comm_size_df_  = pd.read_csv(comm_size_file, encoding = 'utf-8')     
@@ -134,4 +170,11 @@ if __name__=='__main__':
    #generateBoxplotData(all_proj_before_after_hash_dict, comm_size_df_, buggy_df_, proj_secu_df_, output_file)  
 
    proj_dura_output_file = '/Users/arahman/Documents/OneDriveWingUp/OneDrive-TennesseeTechUniversity/Research/Insure/Datasets/PROJ_DURA_DATASET.csv'
-   getProjectDuration(proj_secu_df_, proj_dura_output_file) 
+   #getProjectDuration(proj_secu_df_, proj_dura_output_file) 
+
+
+   '''
+   HotSoS 2020 Work 
+   '''
+   getHotSoSResults() 
+
